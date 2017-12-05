@@ -1,1 +1,1 @@
-Please refer to [data-format.txt](example/data-format.txt) in the folder [example](example) for the graph format
+Please refer to [data-format.md](example/data-format.md) in the folder [example](example) for the graph format
