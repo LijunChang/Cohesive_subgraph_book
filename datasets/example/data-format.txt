@@ -1,0 +1,3 @@
+Two binary files: b_adj.bin, b_degree.bin
+
+The same content as adj.txt, degree.txt. But the binary files only store the numbers in binary form (i.e., without the spaces and the comments)
