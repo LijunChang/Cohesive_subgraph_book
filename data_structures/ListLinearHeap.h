@@ -9,6 +9,8 @@
 #ifndef DATA_STRUCTURES_LISTLINEARHEAP_H_
 #define DATA_STRUCTURES_LISTLINEARHEAP_H_
 
+#include "../utilities/Defines.h"
+
 class ListLinearHeap {
 private:
 	ui n; // number vertices
@@ -56,14 +58,10 @@ public:
 	// initialize the data structure by (id, key) pairs
 	// _n is the number of pairs, _key_cap is the maximum possible key value
 	void init(ui _n, ui _key_cap, ui *_ids, ui *_keys) {
-		if(keys == nullptr) {
-			keys = new ui[n];
-			for(ui i = 0;i < n;i ++) keys[i] = key_cap+1;
-		}
+		if(keys == nullptr) keys = new ui[n];
 		if(pres == nullptr) pres = new ui[n];
 		if(nexts == nullptr) nexts = new ui[n];
 		if(heads == nullptr) heads = new ui[key_cap+1];
-
 		assert(_key_cap <= key_cap);
 		min_key = _key_cap; max_key = 0;
 		for(ui i = 0;i <= _key_cap;i ++) heads[i] = n;
@@ -73,7 +71,8 @@ public:
 
 	// insert (id, key) pair into the data structure
 	void insert(ui id, ui key) {
-		assert(id < n); assert(key <= key_cap); assert(keys[id] > key_cap);
+		assert(id < n); assert(key <= key_cap);
+		//assert(keys[id] > key_cap);
 
 		keys[id] = key; pres[id] = n; nexts[id] = heads[key];
 		if(heads[key] != n) pres[heads[key]] = id;
@@ -104,7 +103,12 @@ public:
 
 	ui get_n() { return n; }
 	ui get_key_cap() { return key_cap; }
-	ui get_key(ui id) { return keys[id]; }
+
+	// get the key value of a vertex; return true if the vertex is in the data structure, return false otherwise
+	ui get_key(ui id, ui &key) {
+		key = keys[id];
+		return key <= key_cap;
+	}
 
 	void tighten() {
 		while(min_key <= max_key&&heads[min_key] == n) ++ min_key;
@@ -133,7 +137,7 @@ public:
 
 	bool empty() {
 		tighten();
-		return min_key <= max_key;
+		return min_key > max_key;
 	}
 
 	ui size() {
@@ -149,9 +153,7 @@ public:
 
 		id = heads[max_key];
 		key = max_key;
-
 		assert(keys[id] == key);
-
 		return true;
 	}
 
@@ -175,7 +177,6 @@ public:
 
 		id = heads[min_key];
 		key = min_key;
-
 		assert(keys[id] == key);
 
 		return true;
@@ -187,6 +188,7 @@ public:
 
 		id = heads[min_key];
 		key = min_key;
+
 		assert(keys[id] == key);
 
 		keys[id] = key_cap + 1;
@@ -219,6 +221,5 @@ public:
 		return new_key;
 	}
 };
-
 
 #endif /* DATA_STRUCTURES_LISTLINEARHEAP_H_ */
