@@ -1,4 +1,4 @@
-# Example graph datasets
+# Graph datasets
 
 The graph is presented by two binary files, [b_adj.bin](example/b_adj.bin) and [b_degree.bin](example/b_degree.bin), on disk.
 
