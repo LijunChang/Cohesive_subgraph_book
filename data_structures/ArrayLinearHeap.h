@@ -138,45 +138,43 @@ public:
 		return true;
 	}
 
-	// increment the key of vertex id by inc
-	ui increment(ui id, ui inc) {
-		assert(keys[id] + inc <= key_cap);
+	// increment the key of vertex id by 1
+	ui increment(ui id) {
+		assert(keys[id] + 1 <= key_cap);
 
-		while(inc --) {
-			ui &key = keys[id];
-			ui pos1 = heads[key+1]-1, pos2 = rids[id];
-			std::swap(ids[pos1], ids[pos2]);
-			rids[ids[pos1]] = pos1; rids[ids[pos2]] = pos2;
+		ui &key = keys[id];
+		ui pos1 = heads[key+1]-1, pos2 = rids[id];
+		std::swap(ids[pos1], ids[pos2]);
+		rids[ids[pos1]] = pos1; rids[ids[pos2]] = pos2;
 
-			if(max_key == key) {
-				++ max_key;
-				heads[max_key+1] = heads[max_key];
-			}
-
-			++ key;
-			-- heads[key];
+		if(max_key == key) {
+			++ max_key;
+			heads[max_key+1] = heads[max_key];
 		}
+
+		++ key;
+		-- heads[key];
+
 		return keys[id];
 	}
 
-	// decrement the key of vertex id by dec
-	ui decrement(ui id, ui dec) {
-		assert(keys[id] >= dec);
+	// decrement the key of vertex id by 1
+	ui decrement(ui id) {
+		assert(keys[id] >= 1);
 
-		while(dec --) {
-			ui &key = keys[id];
-			ui pos1 = heads[key], pos2 = rids[id];
-			std::swap(ids[pos1], ids[pos2]);
-			rids[ids[pos1]] = pos1; rids[ids[pos2]] = pos2;
+		ui &key = keys[id];
+		ui pos1 = heads[key], pos2 = rids[id];
+		std::swap(ids[pos1], ids[pos2]);
+		rids[ids[pos1]] = pos1; rids[ids[pos2]] = pos2;
 
-			if(min_key == key) {
-				-- min_key;
-				heads[min_key] = heads[min_key+1];
-			}
-
-			++ heads[key];
-			-- key;
+		if(min_key == key) {
+			-- min_key;
+			heads[min_key] = heads[min_key+1];
 		}
+
+		++ heads[key];
+		-- key;
+
 		return keys[id];
 	}
 };

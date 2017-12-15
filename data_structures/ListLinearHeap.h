@@ -193,7 +193,7 @@ public:
 	}
 
 	// increment the key of vertex id by inc
-	ui increment(ui id, ui inc) {
+	ui increment(ui id, ui inc = 1) {
 		assert(keys[id]+inc <= key_cap);
 
 		ui new_key = keys[id] + inc;
@@ -205,7 +205,7 @@ public:
 	}
 
 	// decrement the key of vertex id by dec
-	ui decrement(ui id, ui dec) {
+	ui decrement(ui id, ui dec = 1) {
 		assert(keys[id] >= dec);
 
 		ui new_key = keys[id] - dec;
