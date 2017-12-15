@@ -105,14 +105,9 @@ public:
 	ui get_key_cap() { return key_cap; }
 
 	// get the key value of a vertex; return true if the vertex is in the data structure, return false otherwise
-	ui get_key(ui id, ui &key) {
+	bool get_key(ui id, ui &key) {
 		key = keys[id];
 		return key <= key_cap;
-	}
-
-	void tighten() {
-		while(min_key <= max_key&&heads[min_key] == n) ++ min_key;
-		while(min_key <= max_key&&heads[max_key] == n) -- max_key;
 	}
 
 	void get_ids(std::vector<ui> &ids) {
@@ -219,6 +214,12 @@ public:
 		insert(id, new_key);
 
 		return new_key;
+	}
+
+private:
+	void tighten() {
+		while(min_key <= max_key&&heads[min_key] == n) ++ min_key;
+		while(min_key <= max_key&&heads[max_key] == n) -- max_key;
 	}
 };
 
