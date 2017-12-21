@@ -8,9 +8,9 @@ The contents of [b_adj.bin](example/b_adj.bin) and [b_degree.bin](example/b_degr
 
 It transforms a graph in the format of edge list into our binary form.
 
-## compible
+## compile
 
-~~
+```
 make
-~~
+```
 It generates an executable "edgelist2binary"
