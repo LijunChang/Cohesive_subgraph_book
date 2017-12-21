@@ -10,5 +10,7 @@ It transforms a graph in the format of edge list into our binary form.
 
 ## compible
 
-~make~
+~~
+make
+~~
 It generates an executable "edgelist2binary"
