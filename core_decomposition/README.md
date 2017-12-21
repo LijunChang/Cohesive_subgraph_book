@@ -22,3 +22,5 @@ It generates an executable "core_decompose"
 * h-index uses h-index-based core decomposition
 * The third one is similar to array-heap, but directly implements the logic of the data structure within core decomposition without explicitly constructing a new class
 * hierarchy constructs the core spanning tree
+
+Note that, parameter "output" is optional
