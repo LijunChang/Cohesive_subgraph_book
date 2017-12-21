@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
 	}
 	pstart[n] = j;
 
-	f = Utility::open_file((dir + string("/new_b_degree.bin")).c_str(), "wb");
+	f = Utility::open_file((dir + string("/b_degree.bin")).c_str(), "wb");
 
 	ui tt = sizeof(ui);
 	fwrite(&tt, sizeof(ui), 1, f);
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
 	fwrite(degree, sizeof(ui), n, f);
 	fclose(f);
 
-	f = Utility::open_file((dir + string("/new_b_adj.bin")).c_str(), "wb");
+	f = Utility::open_file((dir + string("/b_adj.bin")).c_str(), "wb");
 	fwrite(edge, sizeof(ui), m, f);
 	fclose(f);
 
