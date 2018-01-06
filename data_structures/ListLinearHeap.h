@@ -96,9 +96,7 @@ public:
 			if(nexts[id] != n) pres[nexts[id]] = pid;
 		}
 
-		ui ret = keys[id];
-		keys[id] = key_cap+1;
-		return ret;
+		return keys[id];
 	}
 
 	ui get_n() { return n; }
@@ -160,7 +158,6 @@ public:
 		key = max_key;
 		assert(keys[id] == key);
 
-		keys[id] = key_cap + 1;
 		heads[max_key] = nexts[id];
 		if(heads[max_key] != n) pres[heads[max_key]] = n;
 		return true;
@@ -186,7 +183,6 @@ public:
 
 		assert(keys[id] == key);
 
-		keys[id] = key_cap + 1;
 		heads[min_key] = nexts[id];
 		if(heads[min_key] != n) pres[heads[min_key]] = n;
 		return true;
