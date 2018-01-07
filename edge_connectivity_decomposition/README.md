@@ -14,7 +14,7 @@ It generates an executable "eco_decompose"
 ```
 Note that, the fourth parameter is an integer that specifies the value of k.
 
-This implements the algorithm proposed in the following SIGMOD'13 paper, which computes all k-edge connected component of a graph for a given k.
+This implements the algorithm proposed in the following SIGMOD'13 paper, which computes all k-edge connected components of a graph for a given k.
 
 Lijun Chang, Jeffrey Xu Yu, Lu Qin, Xuemin Lin, Chengfei Liu, and Weifa Liang <br/>
 **Efficiently Computing k-Edge Connected Components via Graph Decomposition** <br/>
