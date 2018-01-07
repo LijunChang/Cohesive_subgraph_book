@@ -16,6 +16,6 @@ Note that, the fourth parameter is an integer that specifies the value of k.
 
 This implements the algorithm proposed in the following paper.
 
-Lijun Chang, Jeffrey Xu Yu, Lu Qin, Xuemin Lin, Chengfei Liu, and Weifa Liang
-**Efficiently Computing k-Edge Connected Components via Graph Decomposition**
+Lijun Chang, Jeffrey Xu Yu, Lu Qin, Xuemin Lin, Chengfei Liu, and Weifa Liang <br/>
+**Efficiently Computing k-Edge Connected Components via Graph Decomposition** <br />
 *Proceedings of the ACM SIGMOD International Conference on Management of Data* (SIGMOD’13), 2013
