@@ -5,7 +5,7 @@
 ```
 make
 ```
-It generates an executable "ec_decompose"
+It generates an executable "eco_decompose"
 
 ## run
 
