@@ -1,24 +1,21 @@
 # Edge Connectivity-based Graph Decomposition Algorithms
 
-## compile
+## Compile
 
 ```
 make
 ```
 It generates an executable "eco_decompose"
 
-## run
+## Run kecc
 
 ```
-./core_decompose ../datasets/as-skitter/ list-heap output
-./core_decompose ../datasets/as-skitter/ array-heap output
-./core_decompose ../datasets/as-skitter/ h-index output
-./core_decompose ../datasets/as-skitter/ output
-./core_decompose ../datasets/as-skitter/ hierarchy output
+./eco_decompose ../datasets/as-skitter/ kecc 10 output
 ```
-Note that, parameter "output" is optional
-* list-heap uses linked list-based linear heap for core decomposition
-* array-heap uses array-based linear heap for core decomposition
-* h-index uses h-index-based core decomposition
-* The third one is similar to array-heap, but directly implements the logic of the data structure within core decomposition without explicitly constructing a new class
-* hierarchy constructs the core spanning tree
+Note that, the fourth parameter is an integer that specifies the value of k.
+
+This implements the algorithm proposed in the following paper.
+
+Lijun Chang, Jeffrey Xu Yu, Lu Qin, Xuemin Lin, Chengfei Liu, and Weifa Liang
+Efficiently Computing k-Edge Connected Components via Graph Decomposition
+Proceedings of the ACM SIGMOD International Conference on Management of Data (SIGMOD’13), 2013
