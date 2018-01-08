@@ -46,6 +46,19 @@ public:
 		}
 	}
 
+	void init(ui *ids, ui _n) {
+		assert(_n <= n);
+
+		if(parent == nullptr) parent = new ui[n];
+		if(rank == nullptr) rank = new ui[n];
+
+		for(ui i = 0;i < _n;i ++) {
+			ui u = ids[i];
+			parent[u] = u;
+			rank[u] = 0;
+		}
+	}
+
 	ui UF_find(ui u) {
 		ui res = u;
 		while(parent[res] != res) res = parent[res];
