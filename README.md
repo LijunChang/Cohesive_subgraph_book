@@ -13,3 +13,7 @@ Contains example data sets in our binary form, and also a cpp program to transfo
 # core_decomposition
 
 Contains algorithms for computing the core decomposition of a large graph
+
+# edge_connectivity_decomposition
+
+Contains algorithms for computing k-edge connected components of a large graph
