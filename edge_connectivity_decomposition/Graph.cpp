@@ -31,77 +31,6 @@ Graph::~Graph() {
 	}
 }
 
-void Graph::edge_connectivity_decomposition(bool print) {
-#ifdef NDEBUG
-	printf("*** ec_decomposition (Release): %s ***\n", dir.c_str());
-#else
-	printf("*** ec_decomposition (Debug): %s ***\n", dir.c_str());
-#endif
-
-	read_graph_binary();
-
-	Timer timer;
-
-	ui *Q = new ui[n];
-	ui *active_component = new ui[n];
-	ui max_core = core_decomposition(Q, active_component);
-
-	char *vis = new char[n];
-	memset(vis, 0, sizeof(char)*n);
-
-	stack<pair<pair<ui,ui>, pair<ui,ui> > > working_stack; // (vertex, active_id of parent computation, L, H)
-
-	for(ui i = 0;i < n;i ++) if(!vis[i]) {
-		ui Q_n = 1;
-		Q[0] = i; vis[i] = 1;
-		for(ui j = 0;j < Q_n;j ++) {
-			ui u = Q[j];
-			for(ui k = pstart[u];k < pstart[u+1];k ++) if(!vis[edges[k]]) {
-				vis[edges[k]] = 1;
-				Q[Q_n ++] = edges[k];
-			}
-		}
-
-		for(ui j = 0;j < Q_n;j ++) active_component[Q[j]] = i;
-		working_stack.push(make_pair(make_pair(i,i), make_pair(2, max_core)));
-	}
-
-	UnionFind *UF = new UnionFind(n);
-	UF->init(n);
-
-	ui *representative = new ui[n]; // representative vertex of super vertex
-	for(ui i = 0;i < n;i ++) representative[i] = i;
-
-	ui *sv_next = new ui[n]; // next of super vertex
-	ui *sv_last = new ui[n]; // last of super vertex
-	for(ui i = 0;i < n;i ++) sv_next[i] = sv_last[i] = i;
-
-	while(!working_stack.empty()) {
-		ui u = working_stack.top().first.first, active_parent = working_stack.top().first.second;
-		ui L = working_stack.top().second.first, H = working_stack.top().second.second;
-
-		ui M = (L+H+1)/2;
-		assert(L <= M <= H);
-
-		if(L == M) working_stack.pop();
-		else working_stack.top().second.second = M-1;
-
-
-	}
-
-	delete[] sv_next;
-	delete[] sv_last;
-
-	delete UF;
-	delete[] representative;
-
-	delete[] vis;
-	delete[] Q;
-	delete[] active_component;
-
-	printf("\tTotal processing time excluding I/O: %s\n\n", Utility::integer_to_string(timer.elapsed()).c_str());
-}
-
 void Graph::k_edge_connected_component(ui K, bool print) {
 #ifdef NDEBUG
 	printf("*** k_edge_connected_component (Release): %s, %u ***\n", dir.c_str(), K);
@@ -199,14 +128,14 @@ void Graph::k_edge_connected_component(ui K, bool print) {
 	delete[] computed;
 	delete[] pend;
 
-	printf("\tTotal processing time excluding I/O: %s\n\n", Utility::integer_to_string(timer.elapsed()).c_str());
+	printf("\tTotal processing time excluding I/O: %s (microseconds)\n\n", Utility::integer_to_string(timer.elapsed()).c_str());
 }
 
 void Graph::k_edge_connected_component_space(ui K, bool print) {
 #ifdef NDEBUG
-	printf("*** k_edge_connected_component (Release): %s, %u ***\n", dir.c_str(), K);
+	printf("*** k_edge_connected_component_space (Release): %s, %u ***\n", dir.c_str(), K);
 #else
-	printf("*** k_edge_connected_component (Debug): %s, %u ***\n", dir.c_str(), K);
+	printf("*** k_edge_connected_component_space (Debug): %s, %u ***\n", dir.c_str(), K);
 #endif
 
 	if(K < 2) {
@@ -218,45 +147,29 @@ void Graph::k_edge_connected_component_space(ui K, bool print) {
 
 	Timer timer;
 
+	ui *pend = new ui[n];
+	for(ui i = 0;i < n;i ++) pend[i] = pstart[i+1];
+
 	char *computed = new char[n];
-	memset(computed, 0, sizeof(char)*n);
-
 	ui *Q = new ui[n], Q_n = 0;
-	ui *active_component = new ui[n];
-	// set active component id for vertices
-	for(ui i = 0;i < n;i ++) if(!computed[i]) {
-		Q[0] = i; Q_n = 1; computed[i] = 1;
-		for(ui j = 0;j < Q_n;j ++) {
-			ui u = Q[j]; active_component[u] = i;
-			for(ui k = pstart[u];k < pstart[u+1];k ++) if(!computed[edges[k]]) {
-				Q[Q_n ++] = edges[k];
-				computed[edges[k]] = 1;
-			}
-		}
-	}
-
-	UnionFind *UF = new UnionFind(n);
-	UF->init(n);
-
-	ui *representative = new ui[n];
-	for(ui i = 0;i < n;i ++) representative[i] = i;
-
-	ui *sv_next = new ui[n];
-	ui *sv_last = new ui[n];
-	ui *adj_next = new ui[n];
-	for(ui i = 0;i < n;i ++) sv_next[i] = sv_last[i] = adj_next[i] = i;
-
 	ui *degree = new ui[n];
 	// k-core-based pruning
 	memset(computed, 0, sizeof(char)*n);
 	for(ui i = 0;i < n;i ++) {
-		degree[i] = pstart[i+1] - pstart[i];
+		degree[i] = pend[i] - pstart[i];
 		if(degree[i] < K) {
 			Q[Q_n ++] = i;
 			computed[i] = 1;
 		}
 	}
-	//k_core_prune(Q, Q_n, computed, degree, active_component);
+	k_core_prune(K, Q, Q_n, computed, degree, pend);
+
+	UnionFind *UF = new UnionFind(n);
+	ui *representative = new ui[n];
+	ui *sv_next = new ui[n];
+	ui *sv_last = new ui[n];
+	ui *adj_next = new ui[n];
+	ui *adj_last = new ui[n];
 
 	ui *ids = new ui[n];
 	ui *cstart = new ui[n+1];
@@ -264,6 +177,12 @@ void Graph::k_edge_connected_component_space(ui K, bool print) {
 	cstart[0] = 0;
 
 	ListLinearHeap *heap = new ListLinearHeap(n, K);
+	ui *keys = new ui[n];
+
+	char *vis = new char[n];
+	memset(vis, 0, sizeof(char)*n);
+
+	ui *pend_local = new ui[n];
 
 	for(ui i = 0;i < n;) {
 		if(computed[i]) {
@@ -271,32 +190,21 @@ void Graph::k_edge_connected_component_space(ui K, bool print) {
 			continue;
 		}
 
-		ui new_cn = c_n;
-		while(true) {
-			if(adj_next[i] == i&&active_component[representative[UF->UF_find(edges[pstart[i]])]] != active_component[i]) {
-				ui pos = cstart[new_cn];
-				ui u = i; ids[pos ++] = u;
-				while(sv_next[u] != u) {
-					u = sv_next[u];
-					ids[pos ++] = u;
-				}
-				cstart[++ new_cn] = pos;
-				break;
-			}
-
-			heap->init(0, K, nullptr, nullptr);
-			heap->insert(i, 0);
-
-			ui u, key;
-			while(heap->pop_max(u, key)) {
-
-			}
-		}
+		initialize_pgraph(i, Q, vis, computed, pend, pend_local, UF, representative, sv_next, sv_last, adj_next, adj_last);
+		ui new_cn = decomposition(i, K, cstart, ids, c_n, Q, keys, vis, pend_local, heap, sv_next, sv_last, adj_next, adj_last, UF, representative);
 		if(new_cn == c_n + 1) {
-			for(ui j = cstart[new_cn-1];j < cstart[new_cn];j ++) computed[ids[j]] = 1;
-			if(cstart[new_cn] > cstart[new_cn-1] + 1) ++ c_n;
+			for(ui j = cstart[c_n];j < cstart[c_n+1];j ++) computed[ids[j]] = 1;
+			++ c_n;
 		}
+		else remove_inter_edges(K, c_n, new_cn, cstart, ids, pend, Q, computed, degree, UF);
 	}
+
+	if(print) print_kecc(K, c_n, cstart, ids);
+
+	delete[] pend_local;
+	delete[] vis;
+	delete[] keys;
+	delete[] pend;
 
 	delete[] ids;
 	delete[] cstart;
@@ -306,13 +214,13 @@ void Graph::k_edge_connected_component_space(ui K, bool print) {
 	delete[] sv_next;
 	delete[] sv_last;
 	delete[] adj_next;
+	delete[] adj_last;
 
-	delete[] active_component;
 	delete[] computed;
 	delete[] degree;
 	delete[] Q;
 
-	printf("\tTotal processing time excluding I/O: %s\n\n", Utility::integer_to_string(timer.elapsed()).c_str());
+	printf("\tTotal processing time excluding I/O: %s (microseconds)\n\n", Utility::integer_to_string(timer.elapsed()).c_str());
 }
 
 // private member functions
@@ -364,68 +272,6 @@ void Graph::read_graph_binary() {
 #ifndef NDEBUG
 	printf("Finished reading graph\n");
 #endif
-}
-
-ui Graph::core_decomposition(ui *peel_sequence, ui *core) {
-#ifndef NDEBUG
-	printf("Start core decomposition\n");
-#endif
-	ui *degree = new ui[n];
-	for(ui i = 0;i < n;i ++) degree[i] = pstart[i+1]-pstart[i];
-
-	ui *rid = new ui[n];
-	ui *id = peel_sequence;
-	memset(id, 0, sizeof(ui)*n);
-	for(ui i = 0;i < n;i ++) ++ id[degree[i]];
-	for(ui i = 1;i < n;i ++) id[i] += id[i-1];
-
-	for(ui i = 0;i < n;i ++) rid[i] = -- id[degree[i]];
-	for(ui i = 0;i < n;i ++) id[rid[i]] = i;
-
-	ui *degree_start = new ui[n+1];
-	for(ui i = 0, j = 0;i <= n;i ++) {
-		while(j < n&&degree[id[j]] < i) ++ j;
-		degree_start[i] = j;
-	}
-
-	ui max_core = 0;
-	for(ui i = 0;i < n;i ++) {
-		ui u = id[i];
-		assert(degree_start[degree[u]] == i);
-		if(degree[u] > max_core) max_core = degree[u];
-		core[u] = max_core;
-
-		++ degree_start[degree[u]];
-		if(degree[u] == 0) continue;
-
-		degree_start[degree[u]-1] = degree_start[degree[u]];
-		for(ui j = pstart[u];j < pstart[u+1];j ++) if(rid[edges[j]] > i) {
-			ui v = edges[j];
-			ui pos1 = degree_start[degree[v]], pos2 = rid[v];
-			swap(id[pos1], id[pos2]);
-			rid[id[pos1]] = pos1; rid[id[pos2]] = pos2;
-			++ degree_start[degree[v]];
-			-- degree[v];
-		}
-	}
-
-#ifndef NDEBUG
-	for(ui i = 0;i < n;i ++) {
-		ui cnt = 0;
-		ui u = peel_sequence[i];
-		for(ui j = pstart[u];j < pstart[u+1];j ++) if(rid[edges[j]] > i) ++ cnt;
-		assert(cnt == degree[u]);
-	}
-#endif
-
-	delete[] degree;
-	delete[] degree_start;
-	delete[] rid;
-
-#ifndef NDEBUG
-	printf("Finished core decomposition\n");
-#endif
-	return max_core;
 }
 
 void Graph::k_core_prune(ui K, ui *Q, ui Q_n, char *computed, ui *degree, ui *pend) {
@@ -487,34 +333,47 @@ void Graph::construct_pgraph(ui s, ui *Q, char *vis, char *computed, ui *pend, E
 	}*/
 }
 
+void Graph::initialize_pgraph(ui s,ui *Q, char *vis, char *computed, ui *pend, ui *pend_local, UnionFind *UF, ui *representative, ui *sv_next, ui *sv_last, ui *adj_next, ui *adj_last) {
+	ui Q_n = 1; Q[0] = s; vis[s] = 1;
+	for(ui j = 0;j < Q_n;j ++) {
+		ui u = Q[j];
+		for(ui k = pstart[u];k < pend[u];) {
+			ui v = edges[k];
+			if(computed[v]) swap(edges[k], edges[-- pend[u]]);
+			else {
+				if(!vis[v]) {
+					Q[Q_n ++] = v;
+					vis[v] = 1;
+				}
+				++ k;
+			}
+		}
+	}
+	UF->init(Q, Q_n);
+	for(ui j = 0;j < Q_n;j ++) {
+		ui u = Q[j];
+		vis[u] = 0;
+		representative[u] = u;
+		sv_next[u] = sv_last[u] = adj_next[u] = adj_last[u] = u;
+		pend_local[u] = pend[u];
+	}
+}
+
 ui Graph::decomposition(ui s, ui K, ui *cstart, ui *ids, ui c_n, ui *Q, ui *keys, char *vis, Edge **graph_head, Edge *graph_edges, ListLinearHeap *heap, ui *sv_next, ui *sv_last) {
-	//decomposition
 	while(graph_head[s] != nullptr) {
 		heap->init(0, K, nullptr, nullptr);
 		heap->insert(s, 0);
 		ui u, key, Q_n = 0;
-		//printf("start an iteration\n");
 		while(heap->pop_max(u, key)) {
 			Q[Q_n ++] = u; vis[u] = 1; //vis[u] = 1 means u is in Q, and vis[u] = 2 means u is in heap
-										//vis[u] == 3 means u is in Q between Q_n and new_Qn
+										//vis[u] = 3 means u is in Q between Q_n and new_Qn
 			keys[u] = key;
-			//printf(" [%u,%u]\n", u, key);
 
 			ui new_Qn = Q_n;
 			for(ui j = Q_n-1;j < new_Qn;j ++) {
 				ui v = Q[j];
-				//printf(" %d\n", v);
-				//if(v == 0) printf("graph_head[0]: %u\n", graph_head[0]);
 
-				for(Edge *e = graph_head[v];e != nullptr;e = e->next) {
-					//if(v == 0) printf("graph_head[0]: %u\n", graph_head[0]);
-
-					//printf("before\n");
-					ui w = e->vertex;
-					//printf("after\n");
-					//if(v == 0) printf("%u is an neighbor of %u\n", w, v);
-
-					if(vis[e->vertex] != 1) {
+				for(Edge *e = graph_head[v];e != nullptr;e = e->next) if(vis[e->vertex] != 1) {
 					ui w = e->vertex;
 
 					if(vis[w] == 3) {
@@ -537,14 +396,12 @@ ui Graph::decomposition(ui s, ui K, ui *cstart, ui *ids, ui c_n, ui *Q, ui *keys
 						vis[w] = 2;
 					}
 				}
-				}
 
 				if(v == u) continue;
 
 				// contract u and v
 				vis[v] = 0;
 				keys[u] += keys[v];
-				//printf("merged %u and %u\n", u, v);
 				merge(graph_head, graph_edges, u, v, keys, sv_next, sv_last);
 			}
 		}
@@ -580,10 +437,109 @@ ui Graph::decomposition(ui s, ui K, ui *cstart, ui *ids, ui c_n, ui *Q, ui *keys
 		}
 
 		for(ui i = 0;i < Q_n;i ++) vis[Q[i]] = 0;
-		//printf("finished one iteration\n\n");
 	}
 	return c_n;
-	//printf("finished decomposition\n");
+}
+
+ui Graph::decomposition(const ui s, const ui K, ui *cstart, ui *ids, ui c_n, ui *Q, ui *keys, char *vis, ui *pend_local, ListLinearHeap *heap, ui *sv_next, ui *sv_last, ui *adj_next, ui *adj_last, UnionFind *UF, ui *representative) {
+	ui old_cn = c_n;
+	while(true) {
+		heap->init(0, K, nullptr, nullptr);
+		heap->insert(s, 0);
+		ui u, key, Q_n = 0;
+		//printf("start an iteration\n");
+		while(heap->pop_max(u, key)) {
+			Q[Q_n ++] = u; vis[u] = 1; //vis[u] = 1 means u is in Q, and vis[u] = 2 means u is in heap
+										//vis[u] = 3 means u is in Q between Q_n and new_Qn
+										//vis[u] = 4 means u is removed from the pgraph
+			keys[u] = key;
+			//printf(" [%u,%u]\n", u, key);
+
+			ui new_Qn = Q_n;
+			for(ui i = Q_n-1;i < new_Qn;i ++) {
+				ui v = Q[i];
+				ui pre = v, tv = v;
+
+				while(true) {
+					assert(representative[UF->UF_find(v)] == v);
+					for(ui j = pstart[tv];j < pend_local[tv];) {
+						ui w = representative[UF->UF_find(edges[j])];
+						if(vis[w] == 4||w == v) {
+							swap(edges[j], edges[-- pend_local[tv]]);
+							continue;
+						}
+						++ j;
+						if(vis[w] != 1) {
+							if(vis[w] == 3) {
+								++ keys[w];
+								continue;
+							}
+
+							if(vis[w] == 2) key = heap->remove(w);
+							else key = 0;
+							assert(key < K);
+
+							++ key;
+							if(key >= K) {
+								Q[new_Qn ++] = w;
+								keys[w] = key;
+								vis[w] = 3;
+							}
+							else {
+								heap->insert(w, key);
+								vis[w] = 2;
+							}
+						}
+					}
+					ui next = adj_next[tv];
+					if(pend_local[tv] > pstart[tv]) {
+						adj_next[pre] = tv;
+						pre = tv;
+					}
+					if(next == tv) break;
+					else tv = next;
+				}
+				adj_last[v] = pre;
+				adj_next[pre] = pre;
+
+				if(v == u) continue;
+
+				// contract u and v
+				keys[u] += keys[v];
+				//printf("merged %u and %u\n", u, v);
+				tv = v;
+				while(true) {
+					for(ui j = pstart[tv];j < pend_local[tv];j ++) if(representative[UF->UF_find(edges[j])] == u) -- keys[u];
+					if(adj_next[tv] == tv) break;
+					else tv = adj_next[tv];
+				}
+				sv_next[sv_last[u]] = v;
+				sv_last[u] = sv_last[v];
+				adj_next[adj_last[u]] = v;
+				adj_last[u] = adj_last[v];
+				representative[UF->UF_union(u,v)] = u;
+			}
+		}
+
+		while(Q_n > 0&&keys[Q[Q_n-1]] < K) {
+			ui u = Q[-- Q_n];
+
+			ui pos = cstart[c_n];
+			ids[pos ++] = u; vis[u] = 4;
+			while(sv_next[u] != u) {
+				u = sv_next[u];
+				ids[pos ++] = u; vis[u] = 4;
+			}
+			cstart[++ c_n] = pos;
+		}
+
+		for(ui i = 0;i < Q_n;i ++) vis[Q[i]] = 0;
+		if(Q_n == 0) break;
+		//printf("finished one iteration\n\n");
+	}
+	for(ui i = old_cn;i < c_n;i ++) for(ui j = cstart[i];j < cstart[i+1];j ++) vis[ids[j]] = 0;
+
+	return c_n;
 }
 
 void Graph::merge(Edge **graph_head, Edge *edges, ui u, ui v, ui *keys, ui *sv_next, ui *sv_last) {
@@ -654,6 +610,24 @@ void Graph::remove_inter_edges(ui K, ui c_n, ui new_cn, ui *cstart, ui *ids, ui 
 	}
 
 	k_core_prune(K, Q, Q_n, computed, degree, pend) ;
+}
+
+void Graph::remove_inter_edges(ui K, ui c_n, ui new_cn, ui *cstart, ui *ids, ui *pend, ui *Q, char *computed, ui *degree, UnionFind *UF) {
+	ui Q_n = 0;
+	for(ui i = c_n;i < new_cn;i ++) for(ui j = cstart[i];j < cstart[i+1];j ++) {
+		ui u = ids[j];
+		ui ru = UF->UF_find(u);
+		for(ui k = pstart[u];k < pend[u];) {
+			if(UF->UF_find(edges[k]) != ru) swap(edges[k], edges[-- pend[u]]);
+			else ++ k;
+		}
+		degree[u] = pend[u] - pstart[u];
+		if(degree[u] < K) {
+			Q[Q_n ++] = u;
+			computed[u] = 1;
+		}
+	}
+	k_core_prune(K, Q, Q_n, computed, degree, pend);
 }
 
 void Graph::print_kecc(ui K, ui c_n, ui *cstart, ui *ids) {

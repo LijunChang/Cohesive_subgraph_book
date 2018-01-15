@@ -101,12 +101,7 @@ public:
 
 	ui get_n() { return n; }
 	ui get_key_cap() { return key_cap; }
-
-	// get the key value of a vertex; return true if the vertex is in the data structure, return false otherwise
-	bool get_key(ui id, ui &key) {
-		key = keys[id];
-		return key <= key_cap;
-	}
+	ui get_key(ui id) { return keys[id]; }
 
 	void get_ids(std::vector<ui> &ids) {
 		ids.clear();

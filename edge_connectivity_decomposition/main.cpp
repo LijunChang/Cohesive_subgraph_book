@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 #ifndef NDEBUG
 	printf("!!! You may want to define NDEBUG in utilities/Defines.h to get better performance!\n");
 #endif
-	if(argc < 2) {
+	if(argc < 3) {
 		print_usage();
 		return 0;
 	}
@@ -31,7 +31,6 @@ int main(int argc, char *argv[]) {
 		if(argc < 4||(argc == 4&&print)) print_usage();
 		else graph->k_edge_connected_component_space((ui)atoi(argv[3]), print);
 	}
-	else if(strcmp(argv[2], "eco-decompose") == 0) graph->edge_connectivity_decomposition(print);
 	else print_usage();
 
 	printf("**********************************\n");
@@ -40,6 +39,5 @@ int main(int argc, char *argv[]) {
 }
 
 void print_usage() {
-	printf("Usage: [1]exe [2]graph-dir [3]algorithm [4 optional]k [5 optional]\"output\"\n");
-	printf("\tAlgorithms: kecc, kecc-space, eco-decompose\n");
+	printf("Usage: [1]exe [2]graph-dir [3]\"kecc\" or \"kecc-space\" [4]k [5 optional]\"output\"\n");
 }

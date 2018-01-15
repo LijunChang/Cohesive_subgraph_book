@@ -59,6 +59,11 @@ public:
 		}
 	}
 
+	void add(ui u, ui v) {
+		parent[u] = v;
+		rank[u] = 0;
+	}
+
 	ui UF_find(ui u) {
 		ui res = u;
 		while(parent[res] != res) res = parent[res];
