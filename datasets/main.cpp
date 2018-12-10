@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
 	ui m = edges.size();
 	printf("n = %s, (undirected) m = %s\n", Utility::integer_to_string(n).c_str(), Utility::integer_to_string(m/2).c_str());
 
-	ui *pstart = new ui[n];
+	ui *pstart = new ui[n+1];
 	ui *edge = new ui[m];
 
 	ui j = 0;
