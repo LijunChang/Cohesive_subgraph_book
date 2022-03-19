@@ -7,7 +7,9 @@ Lijun Chang and Lu Qin.
 Springer Series in the Data Sciences, 2018
 </pre>
 
-## [https://lijunchang.github.io/Cohesive_subgraph_book/core_decomposition/](Core decomposition algorithms)
+## Core decomposition algorithms
+
+[https://lijunchang.github.io/Cohesive_subgraph_book/core_decomposition/](https://lijunchang.github.io/Cohesive_subgraph_book/core_decomposition/)
 
 Contains algorithms for computing the core decomposition of a large graph
 
