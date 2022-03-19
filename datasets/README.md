@@ -1,4 +1,4 @@
-# Graph datasets
+# Graph Dataset Format
 
 Each graph is presented by two binary files, [b_adj.bin](example/b_adj.bin) and [b_degree.bin](example/b_degree.bin), on disk.
 
@@ -8,9 +8,9 @@ The contents of [b_adj.bin](example/b_adj.bin) and [b_degree.bin](example/b_degr
 
 It transforms a graph in the format of edge list into our binary form.
 
-## compile
-
-```
-make
+## Compile the code
+```sh
+$ make clean
+$ make
 ```
 It generates an executable "edgelist2binary"
