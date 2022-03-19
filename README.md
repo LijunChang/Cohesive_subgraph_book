@@ -7,6 +7,10 @@ Lijun Chang and Lu Qin.
 Springer Series in the Data Sciences, 2018
 </pre>
 
+## [https://lijunchang.github.io/Cohesive_subgraph_book/core_decomposition/](Core decomposition algorithms)
+
+Contains algorithms for computing the core decomposition of a large graph
+
 # utilities
 
 Contains utility header files
@@ -19,9 +23,7 @@ Contains data structure header files
 
 Contains example data sets in our binary form, and also a cpp program to transform a graph in the format of edge list into our binary form
 
-# core_decomposition
 
-Contains algorithms for computing the core decomposition of a large graph
 
 # edge_connectivity_decomposition
 
