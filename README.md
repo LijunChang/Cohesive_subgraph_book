@@ -13,7 +13,7 @@ Springer Series in the Data Sciences, 2018
 
 ## Edge-connectivity-based decomposition algorithms
 
-[https://lijunchang.github.io/Cohesive_subgraph_book/core_decomposition/](https://lijunchang.github.io/Cohesive_subgraph_book/core_decomposition/) contains algorithms for computing k-edge connected components of a large graph
+[https://lijunchang.github.io/Cohesive_subgraph_book/edge_connectivity_decomposition/](https://lijunchang.github.io/Cohesive_subgraph_book/edge_connectivity_decomposition/) contains algorithms for computing k-edge connected components of a large graph
 
 # utilities
 
