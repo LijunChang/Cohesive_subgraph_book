@@ -1,16 +1,21 @@
-# Graph datasets
+# Graph Dataset Format
 
 Each graph is presented by two binary files, [b_adj.bin](example/b_adj.bin) and [b_degree.bin](example/b_degree.bin), on disk.
 
 The contents of [b_adj.bin](example/b_adj.bin) and [b_degree.bin](example/b_degree.bin) are the same as [adj.txt](example/adj.txt) and [degree.txt](example/degree.txt), respecitvely. But the binary files only store the numbers in binary form (i.e., without the spaces and the comments).
 
-# main.cpp
+# Converting from Edge List to the Binary Format
 
-It transforms a graph in the format of edge list into our binary form.
+main.cpp converts a graph from the edge list format into our binary format.
 
-## compile
-
-```
-make
+## Compile the code
+```sh
+$ make clean
+$ make
 ```
 It generates an executable "edgelist2binary"
+
+## Run the code
+```sh
+$ ./edgelist2binary example edges.txt
+```

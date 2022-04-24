@@ -1,22 +1,25 @@
-# Edge Connectivity-based Graph Decomposition Algorithms
+# Edge Connectivity-based Decomposition
 
-## Compile
+This repository implements the algorithms presented in our monograph “Cohesive Subgraph Computation over Large Sparse Graphs”. If you are using the code, please cite our monograph.
+<pre>
+Lijun Chang and Lu Qin.
+<a href="https://www.springer.com/us/book/9783030035983">Cohesive Subgraph Computation over Large Sparse Graphs.</a>
+Springer Series in the Data Sciences, 2018
+</pre>
 
-```
-make
+## Compile the code
+```sh
+$ make clean
+$ make
 ```
 It generates an executable "eco_decompose"
 
-## 1. Run kecc or kecc-space
+## Run kecc or kecc-space
 
-```
-./eco_decompose ../datasets/as-skitter/ kecc 10 output
-./eco_decompose ../datasets/as-skitter/ kecc-space 10 output
+```sh
+$ ./eco_decompose ../datasets/as-skitter/ kecc 10 output
+$ ./eco_decompose ../datasets/as-skitter/ kecc-space 10 output
 ```
 Note that, the fourth parameter is an integer that specifies the value of k. kecc-space is more space effective than kecc; that is, kecc-space consumes smaller main memory space.
 
-This implements the algorithm proposed in the following SIGMOD'13 paper, which computes all k-edge connected components of a graph for a given k.
-
-Lijun Chang, Jeffrey Xu Yu, Lu Qin, Xuemin Lin, Chengfei Liu, and Weifa Liang <br/>
-**Efficiently Computing k-Edge Connected Components via Graph Decomposition** <br/>
-*Proceedings of the ACM SIGMOD International Conference on Management of Data* (SIGMOD’13), 2013
+Edge-connectivity-based hierarchical decomposition algorithms can be found at [https://lijunchang.github.io/ECo-Decompose/](https://lijunchang.github.io/ECo-Decompose/)
